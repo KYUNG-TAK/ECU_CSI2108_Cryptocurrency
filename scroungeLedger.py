@@ -53,7 +53,7 @@ def _addTransaction():
         # Write the amount to the ledger witht he set formatting
         ledger.write(" |AMOUNT:| " + amount + "\n")
     # Watch out for errors opening the file for writing
-    except FileNotFoundError:
+    except (FileNotFoundError, PermissionError) as e:
         # Inform the user that there was an IO error
         print("Unable to open " + filename + " for writing. Quitting program.")
         # Exit the program, no facility to correct this error
