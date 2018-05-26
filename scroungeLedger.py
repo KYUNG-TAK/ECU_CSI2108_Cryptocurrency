@@ -1,12 +1,39 @@
 """ECU CSI2108 Assessable Workshop - Blockchain & Cryptocurrencies."""
 
+import string
+import random
+
+
+def _randomGen(category):
+    """Generate 10 random letters or numbers."""
+    length = 10
+    chars = string.ascii_lowercase
+    digits = string.digits
+    if category == "c":
+        result = ""
+        counter = 0
+        while counter < length:
+            result += random.choice(chars)
+            counter += 1
+        return result
+    if category == "n":
+        result = ""
+        counter = 0
+        while counter < length:
+            result += random.choice(digits)
+            counter += 1
+        return result
+
 
 def _addTransaction():
+    """Add the transaction to "ledger.txt"."""
     # Spawn sender variable outside scope of below while loop
     sender = ""
     # Keep asking for input until it is 100% letters
     while (sender.isalpha() is False):
         sender = input("From (max 10, letters only): ")
+        if sender == "":
+            sender = _randomGen("c")
     # Sanitise input
     sender = sender.strip()
     # Lower case only
@@ -20,6 +47,8 @@ def _addTransaction():
     # Keep asking for input until it is 100% letters
     while (recipient.isalpha() is False):
         recipient = input("To (max 10, letters only): ")
+        if recipient == "":
+            recipient = _randomGen("c")
     # Sanitise input
     recipient = recipient.strip()
     # Lower case only
@@ -33,6 +62,8 @@ def _addTransaction():
     # Make sure the input is a number greater than 1
     while (amount.isdigit() is False) or (int(amount) < 1):
         amount = input("Amount (max 10, digits only): ")
+        if amount == "":
+            amount = _randomGen("n")
     # Sanitise input
     recipient = recipient.strip()
     # Use only the first 10 characters of the input
@@ -61,10 +92,9 @@ def _addTransaction():
         quit()
 
 
-# Main program loop
 try:
+    """Main program logic."""
     # Main runtime logic, inspired by previous assignment
-    print("\n")
     print("CSI2108 \"ScroungeCoin\" Ledger Program.")
     print("Press CTRL+C to quit the program cleanly at any time.")
     print("This program works alongside \"scroungeMiner.py\".")

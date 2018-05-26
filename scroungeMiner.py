@@ -134,8 +134,8 @@ def _getNewIndex():
     blockfile.close()
 
 
-def _getLastHash():
-    """Return the hash of the previous block."""
+def _hashPrevBlock():
+    """Return hash of the previous block sans EOL & spaces."""
     # Open the blockchain file
     blockfile = open(blockchain, mode="a+")
     # Seek to the start of the file
@@ -148,28 +148,30 @@ def _getLastHash():
     lines = (line.strip() for line in lines)
     # Remove all blank lines
     lines = (line for line in lines if line)
-    # Start a counter for the for loop
-    counter = 0
+    # Recast the lines object as a list
+    lines = list(lines)
+    # Trim the reversed list to just the first (last) 7 lines
+    lines = lines[:7]
+    # Un-reverse the order of these last 7 lines back to normal
+    lines = reversed(lines)
+    # Start a new sha256 object
     hash = hashlib.sha256()
-    # Iterate through the lines
+    # Iterate through this list of the last block
     for line in lines:
-        # At the sixth line, do the following
-        if counter < 8:
-            # Add each line to be hashed
-            hash.update(line.encode())
-        # Increment the counter each time
-        counter += 1
-    return hash
+        # Add each line to the hash object for hashing
+        hash.update(line.encode())
     # Cleanly close the file before ending this function
     blockfile.close()
+    return hash
 
 
-def _getData():
+def _getNewData():
     """Return last line (new transaction) from "ledger.txt."""""
     # Open the ledger file
     Lfile = open(ledger, mode="a+")
     # Seek to the start of the tape
     Lfile.seek(0)
+    # Create a new list object from the file
     lines = list(Lfile)
     # Reverse the order of the lines
     lines = reversed(lines)
@@ -179,30 +181,91 @@ def _getData():
     lines = (line for line in lines if line)
     # Start a counter for the for loop
     for line in lines:
-        return line
+        # Return the first line of the reversed list
+        # i.e. the new transaction is the last line
+        newTransaction = line
+        # Breaking here means the for loop only happens once
         break
+    return newTransaction
 
 
 def _newBlock():
     """Create a new block on the blockchain."""
-    print("-----BEGIN BLOCK-----")
+    nonce = 0
+    print("\nCalculating new block up to nonce of 50 000.\n")
+    begin = "-----BEGIN BLOCK-----"
     # Get the last index from the blockchain filename
     index = _getNewIndex()
-    print("INDEX = " + str(index))
+    index = "INDEX = " + str(index)
     # Generate a timestamp for this block
     time = _timestamp()
-    print("TIME  = " + time)
     # Gather the last transaction as the block data
-    data = _getData()
-    print("DATA  = " + data)
-    lastHash = _getLastHash()
-    print("PREV  = " + lastHash.hexdigest())
+    data = _getNewData()
+    data = "DATA  = " + data
+    lastHash = _hashPrevBlock()
+    lastHash = "PREV  = " + lastHash.hexdigest()
+    end = "-----END BLOCK------"
+    while True:
+        nonceString = "NONCE = " + str(nonce)
+        # Reset the variable
+        newhash = None
+        newhash = hashlib.sha256()
+        # Add the various parts of the block in
+        newhash.update(begin.encode())
+        newhash.update(index.encode())
+        newhash.update(time.encode())
+        newhash.update(data.encode())
+        newhash.update(lastHash.encode())
+        newhash.update(nonceString.encode())
+        newhash.update(end.encode())
+        # Create a string of the hash
+        first14 = newhash.hexdigest()
+        # Get the first 14 characters
+        first14 = first14[0: 14]
+        # Fourteen zeroes for comparison
+        fourteenZeros = "00000000000000"
+        if (first14 == fourteenZeros):
+            BCfile = open(blockchain, mode="a+")
+            BCfile.write(begin+"\n")
+            BCfile.write(index+"\n")
+            BCfile.write(time+"\n")
+            BCfile.write(data+"\n")
+            BCfile.write(lastHash+"\n")
+            BCfile.write(nonceString+"\n")
+            BCfile.write(end+"\n\n")
+            BCfile.close()
+            print(begin)
+            print(index)
+            print(time)
+            print(data)
+            print(lastHash)
+            print(nonceString)
+            print(end)
+            break
+        if (nonce >= 50000):
+            BCfile = open(blockchain, mode="a+")
+            BCfile.write(begin+"\n")
+            BCfile.write(index+"\n")
+            BCfile.write(time+"\n")
+            BCfile.write(data+"\n")
+            BCfile.write(lastHash+"\n")
+            BCfile.write(nonceString+"\n")
+            BCfile.write(end+"\n\n")
+            BCfile.close()
+            print(begin)
+            print(index)
+            print(time)
+            print(data)
+            print(lastHash)
+            print(nonceString)
+            print(end)
+            break
+        nonce += 1
 
 
 try:
     """Main program loop."""
     # Main runtime logic, inspired by previous assignment
-    print("\n")
     print("CSI2108 \"ScroungeCoin\" Mining Program.")
     print("Press CTRL+C to quit the program cleanly at any time.")
     print("This program works alongside \"scroungeLedger.py\".")
