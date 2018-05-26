@@ -30,7 +30,8 @@ def _addTransaction():
     print("Sending to: " + recipient)
     # Spawn amount variable outside scope of below while loop
     amount = ""
-    while (amount.isdigit() is False):
+    # Make sure the input is a number greater than 1
+    while (amount.isdigit() is False) or (int(amount) < 1):
         amount = input("Amount (max 10, digits only): ")
     # Sanitise input
     recipient = recipient.strip()

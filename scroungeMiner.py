@@ -6,6 +6,7 @@ import hashlib
 
 
 def _timestamp():
+    """Return the current date and time in blockchain format."""
     # Calculate current date and time
     now = datetime.datetime.now()
     # Convert now into a string
@@ -18,6 +19,7 @@ def _timestamp():
 
 # Checks to see if previous blocks. If not start first block.
 def _checkFirst():
+    """If no blockchain exists, start a new one."""
     # Open filename, create if need be. Set stream at EOF
     BCfile = open(blockchain, mode="a+")
     # Variable outside scope of iterator through file lines
@@ -60,7 +62,7 @@ def _checkFirst():
         # Convert the hash from binary to a string
         hashDigest = hash.hexdigest()
         # Set up a correctly formatted string using the digest
-        hashString = "HASH  = " + hashDigest
+        hashString = "PREV  = " + hashDigest
         BCfile.write(hashString + "\n")
         print(hashString)
         nonceString = "NONCE = 0"
@@ -75,6 +77,7 @@ def _checkFirst():
 
 
 def _ledgerHash():
+    """Return a SHA256 of "ledger.txt"."""
     # Open the ledger file, creating it if needed
     Lfile = open(ledger, mode="a+")
     # Start reading the file from the Start
@@ -96,10 +99,9 @@ def _ledgerHash():
     # Return the hash of the ledger file
     return hash
 
-# Read the last known index from the blockchain file
-
 
 def _getNewIndex():
+    """Return the last known index from the blockchain file."""
     # Open the blockchain file
     blockfile = open(blockchain, mode="a+")
     # Seek to the start of the file
@@ -132,18 +134,73 @@ def _getNewIndex():
     blockfile.close()
 
 
+def _getLastHash():
+    """Return the hash of the previous block."""
+    # Open the blockchain file
+    blockfile = open(blockchain, mode="a+")
+    # Seek to the start of the file
+    blockfile.seek(0)
+    # Convert the file into a list of lines
+    lines = list(blockfile)
+    # Reverse the order of the lines
+    lines = reversed(lines)
+    # Strip all lines of leading and trailing whitespace & EOL
+    lines = (line.strip() for line in lines)
+    # Remove all blank lines
+    lines = (line for line in lines if line)
+    # Start a counter for the for loop
+    counter = 0
+    hash = hashlib.sha256()
+    # Iterate through the lines
+    for line in lines:
+        # At the sixth line, do the following
+        if counter < 8:
+            # Add each line to be hashed
+            hash.update(line.encode())
+        # Increment the counter each time
+        counter += 1
+    return hash
+    # Cleanly close the file before ending this function
+    blockfile.close()
+
+
+def _getData():
+    """Return last line (new transaction) from "ledger.txt."""""
+    # Open the ledger file
+    Lfile = open(ledger, mode="a+")
+    # Seek to the start of the tape
+    Lfile.seek(0)
+    lines = list(Lfile)
+    # Reverse the order of the lines
+    lines = reversed(lines)
+    # Strip all lines of leading and trailing whitespace & EOL
+    lines = (line.strip() for line in lines)
+    # Remove all blank lines
+    lines = (line for line in lines if line)
+    # Start a counter for the for loop
+    for line in lines:
+        return line
+        break
+
+
 def _newBlock():
-    print("Ledger change detected!")
-    # Get the last index from the blockchain filename
+    """Create a new block on the blockchain."""
     print("-----BEGIN BLOCK-----")
+    # Get the last index from the blockchain filename
     index = _getNewIndex()
     print("INDEX = " + str(index))
+    # Generate a timestamp for this block
     time = _timestamp()
     print("TIME  = " + time)
+    # Gather the last transaction as the block data
+    data = _getData()
+    print("DATA  = " + data)
+    lastHash = _getLastHash()
+    print("PREV  = " + lastHash.hexdigest())
 
 
-# Main program loop
 try:
+    """Main program loop."""
     # Main runtime logic, inspired by previous assignment
     print("\n")
     print("CSI2108 \"ScroungeCoin\" Mining Program.")
