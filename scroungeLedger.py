@@ -60,11 +60,13 @@ def _addTransaction():
         quit()
 
 
+# Main program loop
 try:
     # Main runtime logic, inspired by previous assignment
     print("\n")
-    print("CSI2108 \"ScroungeCoin\" Cryptocurrency Ledger System.")
+    print("CSI2108 \"ScroungeCoin\" Ledger Program.")
     print("Press CTRL+C to quit the program cleanly at any time.")
+    print("This program works alongside \"scroungeMiner.py\".")
     print("This file adds transactions to \"ledger.txt\".")
     # Infinite loop unless "no" or KeyboardInterrupt
     while True:
