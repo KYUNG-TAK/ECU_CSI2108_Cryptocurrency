@@ -225,6 +225,7 @@ def _newBlock():
         # Fourteen zeroes for comparison
         fourteenZeros = "00000000000000"
         if (first14 == fourteenZeros):
+            # Open the blockchain file for writing
             BCfile = open(blockchain, mode="a+")
             BCfile.write(begin+"\n")
             BCfile.write(index+"\n")
@@ -234,6 +235,7 @@ def _newBlock():
             BCfile.write(nonceString+"\n")
             BCfile.write(end+"\n\n")
             BCfile.close()
+            # Print the new block to the terminal
             print(begin)
             print(index)
             print(time)
@@ -241,8 +243,11 @@ def _newBlock():
             print(lastHash)
             print(nonceString)
             print(end)
+            # Break out of the infinite while loop
             break
+        # Per instructions call it quits at nonce value 50 000
         if (nonce >= 50000):
+            # Open the blockchain file for writing
             BCfile = open(blockchain, mode="a+")
             BCfile.write(begin+"\n")
             BCfile.write(index+"\n")
@@ -252,6 +257,7 @@ def _newBlock():
             BCfile.write(nonceString+"\n")
             BCfile.write(end+"\n\n")
             BCfile.close()
+            # Print the new block to the terminal
             print(begin)
             print(index)
             print(time)
@@ -259,6 +265,7 @@ def _newBlock():
             print(lastHash)
             print(nonceString)
             print(end)
+            # Break out of the infinite while loop
             break
         nonce += 1
 
