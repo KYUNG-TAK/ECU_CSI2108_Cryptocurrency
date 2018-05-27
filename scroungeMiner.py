@@ -15,6 +15,41 @@ def _timestamp():
     return timestring
 
 
+def _writeBlock(hash, index, time, data, previous, nonce):
+    """Write the block to blockchain.txt & output to terminal."""
+    # Set up the formatted strings
+    header = "-----BEGIN HASH-----"
+    midder = "-----BEGIN BLOCK-----"
+    indexFormat = "INDEX = " + str(index)
+    timeFormat = "TIME  = " + time
+    dataFormat = "DATA  = " + data
+    previousFormat = "PREV  = " + previous
+    nonceFormat = "NONCE = " + str(nonce)
+    footer = "-----END BLOCK------"
+    # Open the file for writing, seek to the end of the tape
+    BCfile = open(blockchain, mode="a+")
+    BCfile.write(header+"\n")
+    BCfile.write(hash+"\n")
+    BCfile.write(midder+"\n")
+    BCfile.write(indexFormat+"\n")
+    BCfile.write(timeFormat+"\n")
+    BCfile.write(dataFormat+"\n")
+    BCfile.write(previousFormat+"\n")
+    BCfile.write(nonceFormat+"\n")
+    BCfile.write(footer+"\n\n")
+    BCfile.close()
+    # Print the new block to the terminal
+    print(header)
+    print(hash)
+    print(midder)
+    print(indexFormat)
+    print(timeFormat)
+    print(dataFormat)
+    print(previousFormat)
+    print(nonceFormat)
+    print(footer+"\n")
+
+
 # Checks to see if previous blocks. If not start first block.
 def _checkFirst():
     """If no blockchain exists, start a new one."""
@@ -23,7 +58,7 @@ def _checkFirst():
     # Variable outside scope of iterator through file lines
     isFirst = True
     # Beginning of block furniture to look for
-    begin = "-----BEGIN BLOCK-----"
+    begin = "-----BEGIN HASH-----"
     BCfile.seek(0)
     firstline = BCfile.readline()
     if firstline.strip() == begin.strip():
@@ -32,47 +67,15 @@ def _checkFirst():
     if isFirst is True:
         isFirst is False
         print("\nNo previous blocks. Starting first block.\n")
-        # Write the beginning of block furniture
-        BCfile.write(begin + "\n")
-        # Write the beginning of block furniture
-        print(begin)
-        # Set up the index string for writing and printing
-        index = "INDEX = 0"
-        # Write the index string
-        BCfile.write(index + "\n")
-        # Print the index string
-        print(index)
-        timestamp = _timestamp()
-        timestampFormat = "TIME  = " + timestamp
-        BCfile.write(timestampFormat + "\n")
-        # Print the correctly formatted string
-        print(timestampFormat)
-        # The specified arbitrary data of the first block
+        time = _timestamp()
+        index = 0
         data = "first block"
-        # The data formatted correctly for the file
-        dataString = "DATA  = " + data
-        # Write the correctly formatted string to file
-        BCfile.write(dataString + "\n")
-        # Print the correctly formatted string
-        print(dataString)
+        previous = "[none]"
+        nonce = "[none]"
         dataBytes = data.encode()
-        # Hash the data
         hash = hashlib.sha256(dataBytes)
-        # Convert the hash from binary to a string
-        hashDigest = hash.hexdigest()
-        # Set up a correctly formatted string using the digest
-        hashString = "PREV  = " + hashDigest
-        BCfile.write(hashString + "\n")
-        print(hashString)
-        nonceString = "NONCE = 0"
-        BCfile.write(nonceString + "\n")
-        print(nonceString)
-        # End of block furniture
-        end = "-----END BLOCK-----\n"
-        BCfile.write(end)
-        print(end)
-    # Regardless of new file or not. Close at the end.
-    BCfile.close()
+        digest = hash.hexdigest()
+        _writeBlock(digest, index, time, data, previous, nonce)
 
 
 def _ledgerHash():
@@ -200,37 +203,25 @@ def _getNewData():
 def _newBlock():
     """Create a new block on the blockchain."""
     nonce = 0
-    # Beginning furniture for _hashPrevBlock
-    beginFormat = "-----BEGIN BLOCK-----"
     # Get the last index from the blockchain filename
     index = _getNewIndex()
-    # Formatted string for writing
-    indexFormat = "INDEX = " + str(index)
     # Generate a timestamp for this block
     time = _timestamp()
-    # Formatted string for writing
-    timeFormat = "TIME  = " + time
     # Gather the last transaction as the block data
     data = _getNewData()
-    # Formatted string for writing
-    dataFormat = "DATA  = " + data
-    # SHA256 of previous block contents (no furniture)
+    # SHA256 of previous block contents
     prevHash = _hashPrevBlock()
     prevHashString = prevHash.hexdigest()
-    # Formatted string for writing
-    lastHashFormat = "PREV  = " + prevHashString
-    # Block ending furniture for writing
-    endFormat = "-----END BLOCK------"
+    # First convert the index to a string (rest are strings)
+    indexString = str(index)
+    # Encode the strings to bytes for hashing
+    indexBytes = indexString.encode()
+    timeBytes = time.encode()
+    dataBytes = data.encode()
+    hashBytes = prevHashString.encode()
+    # Create a block variable to hold the whole block
+    block = indexBytes + timeBytes + dataBytes + hashBytes
     while True:
-        # First convert the index to a string (rest are strings)
-        indexString = str(index)
-        # Encode the strings to bytes for hashing
-        indexBytes = indexString.encode()
-        timeBytes = time.encode()
-        dataBytes = data.encode()
-        hashBytes = prevHashString.encode()
-        # Create a block variable to hold the whole block
-        block = indexBytes + timeBytes + dataBytes + hashBytes
         # Reset the hash variable
         newhash = None
         # Start the hash variable
@@ -250,50 +241,12 @@ def _newBlock():
         # Fourteen zeroes for comparison
         fourteenZeros = "00000000000000"
         if (first14 == fourteenZeros):
-            # Prepare the nonce for writing to file
-            nonceFormat = "NONCE = " + str(nonce)
-            # Open the blockchain file for writing
-            BCfile = open(blockchain, mode="a+")
-            BCfile.write(beginFormat+"\n")
-            BCfile.write(indexFormat+"\n")
-            BCfile.write(timeFormat+"\n")
-            BCfile.write(dataFormat+"\n")
-            BCfile.write(lastHashFormat+"\n")
-            BCfile.write(nonceFormat+"\n")
-            BCfile.write(endFormat+"\n\n")
-            BCfile.close()
-            # Print the new block to the terminal
-            print(beginFormat)
-            print(indexFormat)
-            print(timeFormat)
-            print(dataFormat)
-            print(lastHashFormat)
-            print(nonceFormat)
-            print(endFormat+"\n")
+            _writeBlock(digest, index, time, data, prevHashString, nonce)
             # Break out of the infinite while loop
             break
         # Per instructions call it quits at nonce value of 50 000
         if (nonce >= 50000):
-            # Prepare the nonce for writing to file
-            nonceFormat = "NONCE = " + str(nonce)
-            # Open the blockchain file for writing
-            BCfile = open(blockchain, mode="a+")
-            BCfile.write(beginFormat+"\n")
-            BCfile.write(indexFormat+"\n")
-            BCfile.write(timeFormat+"\n")
-            BCfile.write(dataFormat+"\n")
-            BCfile.write(lastHashFormat+"\n")
-            BCfile.write(nonceFormat+"\n")
-            BCfile.write(endFormat+"\n\n")
-            BCfile.close()
-            # Print the new block to the terminal
-            print(beginFormat)
-            print(indexFormat)
-            print(timeFormat)
-            print(dataFormat)
-            print(lastHashFormat)
-            print(nonceFormat)
-            print(endFormat+"\n")
+            _writeBlock(digest, index, time, data, prevHashString, nonce)
             # Break out of the infinite while loop
             break
         nonce += 1
