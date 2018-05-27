@@ -256,10 +256,7 @@ try:
     """Main program loop."""
     # Main runtime logic, inspired by previous assignment
     print("CSI2108 \"ScroungeCoin\" Mining Program.")
-    print("Press CTRL+C to quit the program cleanly at any time.")
-    print("This program works alongside \"scroungeLedger.py\".")
-    print("This program checks \"ledger.txt\" for transactions.")
-    print("This program adds blocks to \"blockchain.txt\".")
+    print("Press CTRL+C to quit cleanly at any time.")
     # Set filename as a variable for easy change if needed
     blockchain = "blockchain.txt"
     ledger = "ledger.txt"

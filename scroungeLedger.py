@@ -96,9 +96,7 @@ try:
     """Main program logic."""
     # Main runtime logic, inspired by previous assignment
     print("CSI2108 \"ScroungeCoin\" Ledger Program.")
-    print("Press CTRL+C to quit the program cleanly at any time.")
-    print("This program works alongside \"scroungeMiner.py\".")
-    print("This file adds transactions to \"ledger.txt\".")
+    print("Press CTRL+C to quit cleanly at any time.")
     # Infinite loop unless "no" or KeyboardInterrupt
     while True:
         # Start an input variable outside scope of below while loop
