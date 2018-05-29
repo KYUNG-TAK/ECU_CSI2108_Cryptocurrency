@@ -19,6 +19,7 @@ def _writeBlock(hash, index, time, data, previous, nonce):
     """Write the block to blockchain.txt & output to terminal."""
     # Set up the formatted strings
     header = "-----BEGIN HASH-----"
+    hashFormat = "HASH  = " + str(hash)
     midder = "-----BEGIN BLOCK-----"
     indexFormat = "INDEX = " + str(index)
     timeFormat = "TIME  = " + time
@@ -29,7 +30,7 @@ def _writeBlock(hash, index, time, data, previous, nonce):
     # Open the file for writing, seek to the end of the tape
     BCfile = open(blockchain, mode="a+")
     BCfile.write(header+"\n")
-    BCfile.write(hash+"\n")
+    BCfile.write(hashFormat+"\n")
     BCfile.write(midder+"\n")
     BCfile.write(indexFormat+"\n")
     BCfile.write(timeFormat+"\n")
@@ -40,7 +41,7 @@ def _writeBlock(hash, index, time, data, previous, nonce):
     BCfile.close()
     # Print the new block to the terminal
     print(header)
-    print(hash)
+    print(hashFormat)
     print(midder)
     print(indexFormat)
     print(timeFormat)

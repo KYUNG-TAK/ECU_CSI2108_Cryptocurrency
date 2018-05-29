@@ -38,7 +38,7 @@ scroungeCoin contains two main program parts. This documentation explains each b
 scroungeLedger.py is the transaction recording system of this cryptocurrency. It works with a file called “ledger.txt.” Below shows the basic flow of user interaction with this program.
 1. Start Program
 2. Type "yes" to add a transaction
-   - Case insensetive
+   - Case insensitive
    - Must be whole word
 3. Enter sender (from)
    - Letters only
