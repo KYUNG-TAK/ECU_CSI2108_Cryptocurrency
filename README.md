@@ -15,19 +15,19 @@ This documentation accompanies the author’s submission to CSI2108 – Cryptogr
 3. Type “yes” to add a transaction to “ledger.txt”
 4. Press enter
 5. Type a name for the sender
-   a. Must be letters only
-   b. Must not exceed 10 letters
-   c. If blank, scroungeLedger.py generates 10 random letters for you
+   - Must be letters only
+   - Must not exceed 10 letters
+   - If blank, scroungeLedger.py generates 10 random letters for you
 6. Press enter
 7. Type a name for the recipient
-   a. Must be letters only
-   b. Must not exceed 10 letters
-   c. If blank, scroungeLedger.py generates 10 random letters for you
+   - Must be letters only
+   - Must not exceed 10 letters
+   - If blank, scroungeLedger.py generates 10 random letters for you
 8. Press enter
 9. Type an amount
-   a. Must be numbers only
-   b. Must not exceed 10 digits
-   c. If blank, scroungeLEdger.py generates 10 random numbers for you
+   - Must be numbers only
+   -  Must not exceed 10 digits
+   -  If blank, scroungeLEdger.py generates 10 random numbers for you
 10. Press enter
 11. Repeat steps 3-10 as required to add new transactions
 12. View the new block, either in “blockchain.txt” or the terminal running scroungeMiner.py
